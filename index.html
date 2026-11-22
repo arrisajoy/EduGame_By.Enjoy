@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduGame_By.Enjoy - ศูนย์รวมเกมการศึกษา & Web AR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f0f4f8;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-30 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
+                    <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-500 rounded-xl flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-gamepad text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">EduGame_By.Enjoy</span>
+                        <div class="flex items-center gap-1.5 -mt-1">
+                            <span class="hidden sm:inline-block text-xs text-slate-400">พื้นที่แห่งการเรียนรู้ & Web AR</span>
+                            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                                <i class="fa-solid fa-camera"></i> เปิดกล้อง AR ได้จริง
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Controls -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button id="teacherLoginBtn" onclick="openPinModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl font-medium text-sm transition flex items-center gap-2 border border-slate-200">
+                        <i class="fa-solid fa-lock text-slate-500"></i>
+                        <span class="hidden sm:inline">โหมดคุณครู</span>
+                    </button>
+
+                    <div id="teacherActiveControls" class="hidden flex items-center gap-1.5 sm:gap-2">
+                        <button onclick="openAddGameModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl font-medium text-sm transition shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>เพิ่มเกมใหม่</span>
+                        </button>
+                        <button onclick="openChangePinModal()" title="เปลี่ยนรหัสผ่านคุณครู" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl font-medium text-sm transition flex items-center gap-1.5 border border-slate-200">
+                            <i class="fa-solid fa-key text-indigo-600"></i>
+                            <span class="hidden md:inline">เปลี่ยนรหัส</span>
+                        </button>
+                        <button onclick="lockTeacherMode()" title="ออกจากโหมดคุณครู" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-2 rounded-xl font-medium text-sm transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-lock-open"></i>
+                            <span class="hidden md:inline">ล็อก</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white py-8 sm:py-12 px-4 shadow-inner">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-center md:text-left max-w-2xl">
+                <span class="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    🚀 เรียนรู้ผ่านการเล่น & สื่อ 3D Web AR
+                </span>
+                <h1 class="text-3xl sm:text-4xl font-bold mb-3 leading-tight">เลือกเกมที่ชอบ แล้วมาสนุกกับการเรียนรู้กันเลย!</h1>
+                <p class="text-indigo-100 text-sm sm:text-base">คลังเกมการศึกษาและสื่อ 3D AR เปิดกล้องส่องบนโต๊ะเรียนจริงได้ทันที</p>
+            </div>
+            <div class="w-full md:w-80">
+                <div class="relative">
+                    <input type="text" id="searchInput" onkeyup="renderGames()" placeholder="ค้นหาชื่อเกม..." class="w-full pl-10 pr-4 py-3 rounded-2xl text-slate-800 bg-white/95 backdrop-blur shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-300 transition">
+                    <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Category Filter -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none" id="categoryTabs">
+            <button onclick="filterCategory('all')" data-cat="all" class="cat-btn active bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition shadow-sm">
+                🌟 ทั้งหมด
+            </button>
+            <button onclick="filterCategory('science')" data-cat="science" class="cat-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition border border-slate-200">
+                🔬 วิทยาศาสตร์ / 3D AR
+            </button>
+            <button onclick="filterCategory('math')" data-cat="math" class="cat-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition border border-slate-200">
+                🔢 คณิตศาสตร์
+            </button>
+            <button onclick="filterCategory('language')" data-cat="language" class="cat-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition border border-slate-200">
+                🔤 ภาษาอังกฤษ / ไทย
+            </button>
+            <button onclick="filterCategory('general')" data-cat="general" class="cat-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition border border-slate-200">
+                🧩 ความรู้ทั่วไป / ฝึกสมอง
+            </button>
+        </div>
+
+        <!-- Games Grid -->
+        <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-3xl border border-dashed border-slate-300">
+            <div class="text-5xl mb-4">🎮</div>
+            <h3 class="text-xl font-bold text-slate-700 mb-2">ยังไม่มีเกมในหมวดหมู่นี้</h3>
+            <p class="text-slate-500 text-sm">ลองเลือกดูเกมในหมวดหมู่อื่น หรือเข้าโหมดคุณครูเพื่อเพิ่มเกมใหม่นะครับ</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-slate-500 text-sm mt-auto">
+        <p>© 2026 EduGame_By.Enjoy - พื้นที่สร้างสรรค์สื่อการสอนรูปแบบเกม & Web AR</p>
+    </footer>
+
+    <!-- MODAL: ยืนยันรหัสผ่านคุณครู -->
+    <div id="pinModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
+            <div class="w-14 h-14 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">เข้าสู่โหมดคุณครู</h3>
+            <p class="text-xs text-slate-500 mb-5">กรอกรหัสผ่านเพื่อเพิ่ม แก้ไขโค้ดทับ หรือลบเกม (รหัสเริ่มต้น: 1234)</p>
+            <form onsubmit="verifyTeacherPin(event)" class="space-y-4">
+                <input type="password" id="pinInput" maxlength="12" required placeholder="กรอกรหัสผ่าน..." class="w-full px-4 py-3 rounded-xl border border-slate-300 text-center text-xl tracking-widest focus:ring-2 focus:ring-indigo-500 outline-none">
+                <p id="pinError" class="text-xs text-rose-500 hidden font-medium">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่</p>
+                <div class="flex justify-center gap-3 pt-2">
+                    <button type="button" onclick="closePinModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm transition">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm transition shadow">ยืนยัน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: เปลี่ยนรหัสผ่านคุณครู -->
+    <div id="changePinModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
+            <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">เปลี่ยนรหัสผ่านคุณครู</h3>
+            <p class="text-xs text-slate-500 mb-5">ตั้งรหัสผ่านใหม่สำหรับเข้าสู่โหมดจัดการเกม</p>
+            <form onsubmit="saveNewTeacherPin(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">รหัสผ่านเดิม</label>
+                    <input type="password" id="oldPinInput" maxlength="12" required placeholder="กรอกรหัสผ่านเดิม..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-center text-base tracking-widest focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">รหัสผ่านใหม่ (4-12 ตัว)</label>
+                    <input type="password" id="newPinInput" minlength="4" maxlength="12" required placeholder="กรอกรหัสผ่านใหม่..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-center text-base tracking-widest focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">ยืนยันรหัสผ่านใหม่</label>
+                    <input type="password" id="confirmNewPinInput" minlength="4" maxlength="12" required placeholder="กรอกรหัสผ่านใหม่อีกครั้ง..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-center text-base tracking-widest focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <p id="changePinError" class="text-xs text-rose-500 hidden font-medium text-center pt-1"></p>
+                <div class="flex justify-center gap-3 pt-3">
+                    <button type="button" onclick="closeChangePinModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm transition">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm transition shadow">บันทึกรหัสใหม่</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: เพิ่ม / แก้ไขโค้ดเกมทับ -->
+    <div id="addGameModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl transform transition-all my-8">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                        <i class="fa-solid fa-code text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 id="modalFormTitle" class="text-xl font-bold text-slate-800">เพิ่มเกมใหม่เข้าสู่ระบบ</h2>
+                        <p class="text-xs text-slate-500">วางโค้ด HTML/JS หรือแก้ไขโค้ดทับของเดิมได้ทันที (รองรับกล้อง AR)</p>
+                    </div>
+                </div>
+                <button onclick="closeAddGameModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition">
+                    <i class="fa-solid fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <form id="addGameForm" onsubmit="saveNewGame(event)" class="space-y-4">
+                <input type="hidden" id="editGameId" value="">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อเกม <span class="text-red-500">*</span></label>
+                        <input type="text" id="gameTitle" required placeholder="เช่น วัฏจักรน้ำ 3D AR, คณิตคิดเร็ว" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">หมวดหมู่ <span class="text-red-500">*</span></label>
+                        <select id="gameCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition bg-white">
+                            <option value="science">🔬 วิทยาศาสตร์ / 3D AR</option>
+                            <option value="math">🔢 คณิตศาสตร์</option>
+                            <option value="language">🔤 ภาษาอังกฤษ / ไทย</option>
+                            <option value="general">🧩 ความรู้ทั่วไป / ฝึกสมอง</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">ไอคอนเกม (Emoji)</label>
+                        <input type="text" id="gameIcon" value="🎮" maxlength="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none text-center text-xl">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">คำอธิบายสั้นๆ / วิธีเล่น</label>
+                        <input type="text" id="gameDesc" placeholder="เช่น แบบจำลอง 3 มิติ พร้อมเปิดกล้อง AR ส่องบนโต๊ะเรียน" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-sm font-medium text-slate-700">โค้ดเกมทั้งหมด (HTML Code) <span class="text-red-500">*</span></label>
+                        <button type="button" onclick="clearCodeBox()" class="text-xs text-rose-600 hover:text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md font-medium transition">
+                            <i class="fa-solid fa-eraser"></i> ล้างช่องโค้ดเพื่อวางทับ
+                        </button>
+                    </div>
+                    <textarea id="gameCode" required rows="8" placeholder="<!DOCTYPE html>&#10;<html>&#10;... วางโค้ดเกมทั้งหมดที่นี่ ...&#10;</html>" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-xs bg-slate-50 text-slate-700"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeAddGameModal()" class="px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition">ยกเลิก</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-medium transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> บันทึกโค้ดเกม
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: หน้าต่างเล่นเกม (เปิดกล้อง AR ได้จริง 100% + พอดีหน้าจอไม่ต้องเลื่อน) -->
+    <div id="playGameModal" class="fixed inset-0 w-screen h-[100dvh] bg-slate-950 z-50 hidden flex flex-col overflow-hidden">
+        <div id="playerHeader" class="bg-slate-900 text-white px-3 py-2 flex justify-between items-center shadow-md border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-2 min-w-0">
+                <span id="playerGameIcon" class="text-xl shrink-0">🎮</span>
+                <div class="truncate">
+                    <h3 id="playerGameTitle" class="font-bold text-sm sm:text-base leading-tight truncate">ชื่อเกม</h3>
+                    <p id="playerGameDesc" class="text-[11px] text-slate-400 hidden sm:block truncate">คำอธิบายเกม</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="toggleFullScreenPlayer()" title="ขยายเต็มหน้าจอ" class="bg-indigo-600/80 hover:bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1">
+                    <i id="fullscreenIcon" class="fa-solid fa-expand"></i>
+                    <span class="hidden sm:inline">เต็มจอ</span>
+                </button>
+                <button onclick="reloadCurrentGame()" title="เริ่มเกมใหม่" class="bg-slate-800 hover:bg-slate-700 text-white px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">เล่นใหม่</span>
+                </button>
+                <button onclick="closePlayModal()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-door-open"></i>
+                    <span>ออก</span>
+                </button>
+            </div>
+        </div>
+        <div class="flex-1 w-full h-full bg-slate-950 relative overflow-hidden">
+            <iframe id="gameIframe" class="absolute inset-0 w-full h-full border-0" allow="camera *; microphone *; fullscreen *; accelerometer *; gyroscope *; magnetometer *; xr-spatial-tracking *; geolocation *; clipboard-write *" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+        <i class="fa-solid fa-check-circle text-emerald-400 text-lg"></i>
+        <span id="toastMsg" class="text-sm font-medium">บันทึกเรียบร้อย</span>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div id="deleteConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
+            <div class="w-14 h-14 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">ต้องการลบเกมนี้ใช่ไหม?</h3>
+            <p class="text-sm text-slate-500 mb-6">เกมนี้จะถูกลบออกจากรายการและไม่สามารถกู้คืนได้</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeDeleteModal()" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm transition">ยกเลิก</button>
+                <button id="confirmDeleteBtn" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm transition shadow">ลบเกม</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let teacherPin = localStorage.getItem('edugame_teacher_pin') || "1234";
+
+        const defaultGames = [
+            {
+                id: 'demo-water-ar-p5',
+                title: 'วัฏจักรน้ำ 3D Web AR (ป.5)',
+                category: 'science',
+                icon: '🌧️',
+                desc: 'แบบจำลอง 3 มิติพร้อมเปิดกล้อง AR ส่องดูบนโต๊ะเรียนจริง + แบบทดสอบ ป.5',
+                createdAt: 3000,
+                code: `<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>สื่อการสอนวิทยาศาสตร์ ป.5: วัฏจักรน้ำ 3D Web AR</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Kanit', sans-serif; background-color: #0f172a; user-select: none; -webkit-user-select: none; }
+        #camera-feed { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: 1; display: none; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2; touch-action: none; }
+        #hotspots-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 5; pointer-events: none; overflow: hidden; }
+        .hotspot-badge { position: absolute; transform: translate(-50%, -50%); background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px); border: 1.5px solid rgba(56, 189, 248, 0.75); color: #ffffff; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; white-space: nowrap; cursor: pointer; pointer-events: auto; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); transition: transform 0.2s, background-color 0.2s; display: flex; align-items: center; gap: 5px; }
+        .hotspot-badge:hover, .hotspot-badge.active { background: rgba(2, 132, 199, 0.95); border-color: #ffffff; transform: translate(-50%, -50%) scale(1.08); z-index: 20; }
+        .hotspot-dot { width: 7px; height: 7px; border-radius: 50%; background-color: #38bdf8; display: inline-block; animation: pulse-dot 1.5s infinite; }
+        @keyframes pulse-dot { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } 100% { transform: scale(0.9); opacity: 1; } }
+        .glass-panel { background: rgba(15, 23, 42, 0.82); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35); }
+        .sarabun { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="text-slate-100">
+    <video id="camera-feed" autoplay playsinline muted></video>
+    <div id="canvas-container"></div>
+    <div id="hotspots-layer"></div>
+
+    <header class="fixed top-0 left-0 right-0 z-30 p-2.5 sm:p-4 flex justify-between items-center pointer-events-none gap-2">
+        <div class="glass-panel rounded-xl px-3 py-2 pointer-events-auto flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white shadow">
+                <i class="fa-solid fa-water text-sm"></i>
+            </div>
+            <div>
+                <h1 class="text-xs sm:text-sm font-bold text-white leading-tight">วัฏจักรน้ำ 3D (ป.5)</h1>
+                <p class="text-[10px] text-sky-300 hidden sm:block">ลากเพื่อหมุน • ถ่างนิ้วซูม • แตะป้ายชื่อ</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
+            <button id="btn-ar-toggle" onclick="toggleARMode()" class="glass-panel hover:bg-slate-800/90 text-white px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 transition border border-sky-500/40">
+                <i id="ar-icon" class="fa-solid fa-camera text-sky-400"></i>
+                <span id="ar-text">เปิดกล้อง AR</span>
+            </button>
+            <button id="btn-info-toggle" onclick="toggleInfoCard()" class="glass-panel hover:bg-slate-800/90 text-sky-300 p-2.5 rounded-xl text-xs transition" title="เปิด/ปิดคำอธิบาย">
+                <i class="fa-solid fa-book-open"></i>
+            </button>
+            <button onclick="openQuizModal()" class="glass-panel hover:bg-amber-600/80 text-amber-300 hover:text-white p-2.5 rounded-xl text-xs transition border border-amber-500/30" title="แบบทดสอบ ป.5">
+                <i class="fa-solid fa-lightbulb"></i>
+            </button>
+            <button onclick="resetCameraView()" class="glass-panel hover:bg-slate-800/90 text-slate-300 p-2.5 rounded-xl text-xs transition" title="ดูภาพรวมทั้งหมด">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="fixed bottom-0 left-0 right-0 z-30 p-2.5 sm:p-4 flex flex-col items-center gap-2 pointer-events-none">
+        <div id="info-card" class="glass-panel rounded-2xl p-3 sm:p-4 w-full max-w-md pointer-events-auto transition-all duration-300 border border-sky-400/40 hidden">
+            <div class="flex justify-between items-start gap-2 mb-1">
+                <div class="flex items-center gap-2">
+                    <span id="step-badge" class="bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[10px] font-semibold px-2 py-0.5 rounded-full">ขั้นตอนที่ 1</span>
+                    <h2 id="step-title" class="text-sm sm:text-base font-bold text-white">1. การระเหยและการคายน้ำ</h2>
+                </div>
+                <button onclick="toggleInfoCard(false)" class="text-slate-400 hover:text-white p-1 leading-none">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <p id="step-desc" class="sarabun text-xs sm:text-sm text-slate-200 leading-relaxed mb-2">
+                ความร้อนจากดวงอาทิตย์ทำให้น้ำในทะเล แม่น้ำ ระเหยกลายเป็นไอน้ำ และพืชคายน้ำทางปากใบลอยขึ้นสู่ท้องฟ้า
+            </p>
+            <div class="flex justify-between items-center pt-1.5 border-t border-slate-700/70 text-[11px]">
+                <button onclick="prevStep()" class="text-slate-300 hover:text-sky-400 flex items-center gap-1 py-0.5 px-1.5">
+                    <i class="fa-solid fa-chevron-left"></i> ก่อนหน้า
+                </button>
+                <span id="step-counter" class="text-slate-400">1 / 4</span>
+                <button onclick="nextStep()" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium">
+                    ถัดไป <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-1.5 w-full max-w-lg pointer-events-auto">
+            <div class="grid grid-cols-5 gap-1">
+                <button onclick="resetCameraView()" id="nav-btn-overview" class="step-nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-center transition bg-sky-600/30 border border-sky-400/50 text-white">
+                    <i class="fa-solid fa-earth-asia text-emerald-400 text-xs mb-0.5"></i>
+                    <span class="text-[10px] sm:text-xs font-medium leading-tight">ภาพรวม</span>
+                </button>
+                <button onclick="selectStep(0)" id="nav-btn-0" class="step-nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-center transition text-slate-300 hover:bg-slate-800/70">
+                    <i class="fa-solid fa-sun text-amber-400 text-xs mb-0.5"></i>
+                    <span class="text-[10px] sm:text-xs font-medium leading-tight">1. ระเหย/คายน้ำ</span>
+                </button>
+                <button onclick="selectStep(1)" id="nav-btn-1" class="step-nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-center transition text-slate-300 hover:bg-slate-800/70">
+                    <i class="fa-solid fa-cloud text-sky-300 text-xs mb-0.5"></i>
+                    <span class="text-[10px] sm:text-xs font-medium leading-tight">2. ควบแน่น</span>
+                </button>
+                <button onclick="selectStep(2)" id="nav-btn-2" class="step-nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-center transition text-slate-300 hover:bg-slate-800/70">
+                    <i class="fa-solid fa-cloud-showers-heavy text-blue-400 text-xs mb-0.5"></i>
+                    <span class="text-[10px] sm:text-xs font-medium leading-tight">3. หยาดน้ำฟ้า</span>
+                </button>
+                <button onclick="selectStep(3)" id="nav-btn-3" class="step-nav-btn flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-center transition text-slate-300 hover:bg-slate-800/70">
+                    <i class="fa-solid fa-water text-cyan-400 text-xs mb-0.5"></i>
+                    <span class="text-[10px] sm:text-xs font-medium leading-tight">4. น้ำไหลรวม</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-full px-3 py-1.5 pointer-events-auto flex items-center gap-3 text-[11px]">
+            <button id="btn-play-pause" onclick="toggleAnimation()" class="flex items-center gap-1 text-white hover:text-sky-400 font-medium">
+                <i id="play-icon" class="fa-solid fa-pause text-sky-400"></i>
+                <span id="play-text">หยุด</span>
+            </button>
+            <div class="h-3 w-[1px] bg-slate-600"></div>
+            <div class="flex items-center gap-1">
+                <button onclick="setSpeed(0.5)" id="spd-0.5" class="spd-btn px-1.5 py-0.5 rounded text-slate-400 hover:text-white">0.5x</button>
+                <button onclick="setSpeed(1)" id="spd-1" class="spd-btn px-1.5 py-0.5 rounded bg-sky-600 text-white font-bold">1x</button>
+                <button onclick="setSpeed(2)" id="spd-2" class="spd-btn px-1.5 py-0.5 rounded text-slate-400 hover:text-white">2x</button>
+            </div>
+            <div class="h-3 w-[1px] bg-slate-600"></div>
+            <button id="btn-labels-toggle" onclick="toggleHotspots()" class="flex items-center gap-1 text-sky-300 hover:text-white">
+                <i class="fa-solid fa-tag"></i>
+                <span id="labels-text">ป้ายชื่อ: เปิด</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="toast-box" class="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 glass-panel border border-sky-400/50 text-white px-4 py-2 rounded-full text-xs shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none flex items-center gap-2">
+        <i class="fa-solid fa-circle-info text-sky-400"></i>
+        <span id="toast-msg">ข้อความแจ้งเตือน</span>
+    </div>
+
+    <div id="quiz-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-panel rounded-2xl max-w-md w-full p-5 border border-sky-500/30 shadow-2xl">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-700/80 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                        <i class="fa-solid fa-trophy text-sm"></i>
+                    </span>
+                    <h3 class="text-base font-bold text-white">แบบทดสอบวัฏจักรน้ำ (ป.5)</h3>
+                </div>
+                <button onclick="closeQuizModal()" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="quiz-body">
+                <div class="flex justify-between text-xs text-slate-400 mb-2">
+                    <span id="quiz-progress">ข้อที่ 1 จาก 5</span>
+                    <span id="quiz-score-live" class="text-sky-400 font-medium">คะแนน: 0</span>
+                </div>
+                <p id="quiz-question" class="text-sm sm:text-base font-medium text-white mb-4 leading-relaxed"></p>
+                <div id="quiz-options" class="space-y-2"></div>
+                <div id="quiz-feedback" class="mt-3 p-2.5 rounded-xl text-xs hidden sarabun"></div>
+                <div class="mt-4 flex justify-end">
+                    <button id="btn-next-quiz" onclick="nextQuizQuestion()" class="hidden bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl text-xs font-medium">
+                        ข้อถัดไป <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="quiz-result" class="hidden text-center py-4">
+                <div class="w-14 h-14 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mx-auto mb-3 border border-amber-400/40">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-1">ทำแบบทดสอบเสร็จสิ้น!</h4>
+                <p id="final-score-text" class="text-sky-400 text-base font-semibold mb-3"></p>
+                <p id="final-comment" class="sarabun text-xs text-slate-300 mb-5"></p>
+                <div class="flex justify-center gap-2">
+                    <button onclick="restartQuiz()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-medium">
+                        ทำใหม่อีกครั้ง
+                    </button>
+                    <button onclick="closeQuizModal()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2 rounded-xl text-xs font-medium">
+                        กลับสู่แบบจำลอง 3D
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stepsData = [
+            { badge: "ขั้นตอนที่ 1", title: "1. การระเหยและการคายน้ำ", desc: "ความร้อนจากดวงอาทิตย์ทำให้น้ำในทะเล แม่น้ำ ระเหยกลายเป็นไอน้ำ และต้นไม้คายน้ำทางปากใบลอยขึ้นสู่ท้องฟ้า", camPos: { x: 4.5, y: 4.5, z: 11.5 }, target: { x: 1.0, y: 1.5, z: 0 } },
+            { badge: "ขั้นตอนที่ 2", title: "2. การควบแน่น (Condensation)", desc: "เมื่อไอน้ำลอยสูงขึ้นไปกระทบกับอากาศเย็นด้านบน จะกลั่นตัวเป็นละอองน้ำเล็กๆ เกาะกลุ่มรวมกันกลายเป็นก้อนเมฆบนท้องฟ้า", camPos: { x: 0, y: 6.2, z: 12.0 }, target: { x: 0, y: 3.6, z: 0 } },
+            { badge: "ขั้นตอนที่ 3", title: "3. หยาดน้ำฟ้า / ฝนตก (Precipitation)", desc: "เมื่อละอองน้ำในก้อนเมฆรวมตัวกันจนมีขนาดใหญ่และหนักเกินกว่าอากาศจะพยุงไว้ได้ จะตกลงสู่พื้นโลกในรูปของฝน ลูกเห็บ หรือหิมะ", camPos: { x: -5.5, y: 5.0, z: 11.5 }, target: { x: -2.8, y: 2.0, z: 0 } },
+            { badge: "ขั้นตอนที่ 4", title: "4. น้ำไหลรวม / น้ำสะสม (Collection)", desc: "น้ำฝนที่ตกลงมาจะไหลรวมตามลำธาร แม่น้ำ และบางส่วนซึมลงชั้นดินกลายเป็น 'น้ำใต้ดิน' เพื่อสะสมกลับสู่ทะเลและมหาสมุทรอีกครั้ง", camPos: { x: -1.5, y: 3.2, z: 12.5 }, target: { x: -0.5, y: -0.6, z: 0.8 } }
+        ];
+
+        const quizData = [
+            { q: "1. ปัจจัยสำคัญที่สุดที่ทำให้น้ำในแหล่งน้ำระเหยกลายเป็นไอน้ำคือข้อใด?", options: ["แรงโน้มถ่วงของโลก", "ความร้อนจากดวงอาทิตย์", "แรงลมพัดในฤดูหนาว", "ความดันของน้ำใต้ดิน"], answer: 1, explain: "ถูกต้อง! พลังงานความร้อนจากดวงอาทิตย์ทำให้น้ำเปลี่ยนสถานะเป็นไอน้ำลอยขึ้นสู่อากาศ" },
+            { q: "2. การที่พืชปล่อยไอน้ำออกมาทางปากใบเรียกว่ากระบวนการใด?", options: ["การควบแน่น", "การคายน้ำ", "การตกตะกอน", "การซึมผ่านดิน"], answer: 1, explain: "ถูกต้อง! พืชจะคายน้ำส่วนเกินออกมาทางปากใบในรูปของไอน้ำ ซึ่งรวมอยู่ในขั้นตอนที่ 1" },
+            { q: "3. ก้อนเมฆบนท้องฟ้าเกิดจากกระบวนการใดในวัฏจักรน้ำ?", options: ["การควบแน่นของไอน้ำ", "การระเหยของน้ำทะเล", "การไหลรวมของแม่น้ำ", "การซึมของน้ำใต้ดิน"], answer: 0, explain: "ถูกต้อง! ไอน้ำที่ลอยสูงขึ้นเมื่อเจอความเย็นจะเกิดการควบแน่นกลายเป็นละอองน้ำรวมตัวเป็นก้อนเมฆ" },
+            { q: "4. ข้อใดหมายถึง 'หยาดน้ำฟ้า' (Precipitation)?", options: ["ไอน้ำที่ลอยขึ้นจากทะเล", "น้ำที่ขังอยู่ใต้ชั้นหิน", "น้ำที่ตกลงสู่พื้นโลก เช่น ฝน ลูกเห็บ", "หมอกในตอนเช้า"], answer: 2, explain: "ถูกต้อง! หยาดน้ำฟ้าคือน้ำในบรรยากาศที่ตกลงสู่พื้นโลก เช่น ฝน หิมะ และลูกเห็บ" },
+            { q: "5. ในขั้นตอน 'น้ำไหลรวม / น้ำสะสม' น้ำฝนที่ซึมผ่านชั้นดินลงไปสะสมอยู่ด้านล่างเรียกว่าอะไร?", options: ["น้ำค้าง", "น้ำใต้ดิน", "ไอน้ำ", "ก้อนเมฆ"], answer: 1, explain: "ถูกต้อง! น้ำที่ซึมผ่านชั้นดินและหินลงไปสะสมอยู่ใต้ผิวดินเรียกว่า น้ำใต้ดิน (Groundwater)" }
+        ];
+
+        let scene, camera, renderer, controls, worldGroup, sunGroup, oceanMesh;
+        let vaporParticles, transpirationParticles, rainParticles, riverRunoffParticles, infiltrationParticles, groundWaterParticles;
+        let animatedArrows = [], hotspotAnchors = [], hotspotElements = [];
+        let isPlaying = true, animSpeed = 1.0, showLabels = true, isARMode = false, arStream = null, currentStep = 0;
+        let targetCamPos = null, targetLookAt = null;
+        const clock = new THREE.Clock();
+
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 6.2, 14.5);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+            controls.minDistance = 5;
+            controls.maxDistance = 26;
+            controls.maxPolarAngle = Math.PI * 0.85;
+            controls.target.set(0, 0.8, 0);
+            controls.addEventListener('start', () => { targetCamPos = null; targetLookAt = null; });
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+            const dirLight = new THREE.DirectionalLight(0xfffbeb, 0.9);
+            dirLight.position.set(8, 14, 10);
+            scene.add(dirLight);
+            const fillLight = new THREE.DirectionalLight(0x38bdf8, 0.4);
+            fillLight.position.set(-8, 6, -8);
+            scene.add(fillLight);
+
+            worldGroup = new THREE.Group();
+            scene.add(worldGroup);
+            buildEnvironment();
+            buildSunAndClouds();
+            buildParticles();
+            buildArrows();
+            setupHotspots();
+            updateVisualFocus(-1, true);
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function buildEnvironment() {
+            const topsoil = new THREE.Mesh(new THREE.BoxGeometry(10, 0.7, 5.5), new THREE.MeshStandardMaterial({ color: 0x6b4423, roughness: 0.9 }));
+            topsoil.position.set(0, -0.35, 0);
+            worldGroup.add(topsoil);
+
+            const aquifer = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.85, 5.52), new THREE.MeshStandardMaterial({ color: 0x0ea5e9, emissive: 0x0284c7, emissiveIntensity: 0.45, transparent: true, opacity: 0.88, roughness: 0.2 }));
+            aquifer.position.set(-1.5, -1.12, 0);
+            worldGroup.add(aquifer);
+
+            const bedrock = new THREE.Mesh(new THREE.BoxGeometry(10, 0.5, 5.5), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.9 }));
+            bedrock.position.set(0, -1.8, 0);
+            worldGroup.add(bedrock);
+
+            const land = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.35, 5.5), new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.8 }));
+            land.position.set(-2.0, 0.17, 0);
+            worldGroup.add(land);
+
+            oceanMesh = new THREE.Mesh(new THREE.BoxGeometry(3.98, 1.85, 5.54), new THREE.MeshStandardMaterial({ color: 0x0284c7, emissive: 0x0369a1, emissiveIntensity: 0.25, transparent: true, opacity: 0.92, roughness: 0.15, polygonOffset: true, polygonOffsetFactor: -1 }));
+            oceanMesh.position.set(3.01, -0.62, 0);
+            worldGroup.add(oceanMesh);
+
+            function createMountain(x, z, radius, height) {
+                const mtnGroup = new THREE.Group();
+                const mtn = new THREE.Mesh(new THREE.ConeGeometry(radius, height, 7), new THREE.MeshStandardMaterial({ color: 0x64748b, flatShading: true }));
+                mtn.position.y = height / 2;
+                mtnGroup.add(mtn);
+                const snowHeight = height * 0.36;
+                const snow = new THREE.Mesh(new THREE.ConeGeometry(radius * 0.37, snowHeight, 7), new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true, polygonOffset: true, polygonOffsetFactor: -1 }));
+                snow.position.y = height - (snowHeight / 2) + 0.03;
+                mtnGroup.add(snow);
+                mtnGroup.position.set(x, 0.34, z);
+                worldGroup.add(mtnGroup);
+            }
+            createMountain(-3.3, -1.0, 1.8, 3.2);
+            createMountain(-2.1, -1.5, 1.4, 2.4);
+
+            const river = new THREE.Mesh(new THREE.BoxGeometry(4.3, 0.12, 0.55), new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.2, polygonOffset: true, polygonOffsetFactor: -2 }));
+            river.position.set(-1.05, 0.41, 0.4);
+            river.rotation.y = -0.15;
+            worldGroup.add(river);
+
+            function createTree(x, z) {
+                const tree = new THREE.Group();
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 0.45, 6), new THREE.MeshStandardMaterial({ color: 0x5c3a21 }));
+                trunk.position.y = 0.22;
+                const leaves1 = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.75, 6), new THREE.MeshStandardMaterial({ color: 0x15803d, flatShading: true }));
+                leaves1.position.y = 0.65;
+                const leaves2 = new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.6, 6), new THREE.MeshStandardMaterial({ color: 0x16a34a, flatShading: true }));
+                leaves2.position.y = 0.98;
+                tree.add(trunk, leaves1, leaves2);
+                tree.position.set(x, 0.34, z);
+                worldGroup.add(tree);
+            }
+            createTree(-1.3, -1.1); createTree(-0.6, -0.6); createTree(-1.8, 1.3); createTree(-0.8, 1.5); createTree(-2.9, 1.2);
+        }
+
+        function buildSunAndClouds() {
+            sunGroup = new THREE.Group();
+            sunGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.75, 24, 24), new THREE.MeshBasicMaterial({ color: 0xfbbf24 })));
+            sunGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.95, 24, 24), new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.35 })));
+            const rayGeo = new THREE.ConeGeometry(0.14, 0.48, 6);
+            const rayMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
+            for (let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                const ray = new THREE.Mesh(rayGeo, rayMat);
+                ray.position.set(Math.cos(angle) * 1.18, Math.sin(angle) * 1.18, 0);
+                ray.rotation.z = angle - Math.PI / 2;
+                sunGroup.add(ray);
+            }
+            sunGroup.position.set(3.8, 4.9, -1.2);
+            worldGroup.add(sunGroup);
+
+            function createCloud(x, y, z, colorHex, scale = 1) {
+                const cloud = new THREE.Group();
+                const mat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.9 });
+                [[0, 0, 0, 0.65], [-0.55, -0.08, 0.1, 0.5], [0.55, -0.08, -0.1, 0.52], [0.2, 0.25, 0.15, 0.45], [-0.25, 0.2, -0.15, 0.42]].forEach(p => {
+                    const mesh = new THREE.Mesh(new THREE.SphereGeometry(p[3], 14, 14), mat);
+                    mesh.position.set(p[0], p[1], p[2]);
+                    cloud.add(mesh);
+                });
+                cloud.position.set(x, y, z);
+                cloud.scale.setScalar(scale);
+                worldGroup.add(cloud);
+            }
+            createCloud(1.3, 4.3, 0.2, 0xf8fafc, 1.05);
+            createCloud(-2.9, 4.2, -0.3, 0x94a3b8, 1.15);
+        }
+
+        function buildParticles() {
+            vaporParticles = createParticleSystem(35, 0xe0f2fe, 0.11, () => ({ x: 1.3 + Math.random() * 3.2, y: 0.4 + Math.random() * 3.6, z: (Math.random() - 0.5) * 4.0 }));
+            transpirationParticles = createParticleSystem(25, 0xa7f3d0, 0.10, () => ({ x: -2.6 + Math.random() * 2.2, y: 1.2 + Math.random() * 2.8, z: (Math.random() - 0.5) * 3.2 }));
+            rainParticles = createParticleSystem(45, 0x38bdf8, 0.11, () => ({ x: -3.6 + Math.random() * 1.6, y: 0.6 + Math.random() * 3.4, z: -1.1 + Math.random() * 1.8 }));
+            riverRunoffParticles = createDropletGroup(28, 0xe0f2fe, 0x0ea5e9, 0.036, () => { const t = Math.random(); return { x: -2.9 + t * 4.0, y: 0.49, z: 0.25 + t * 0.35 + (Math.random() - 0.5) * 0.35 }; });
+            infiltrationParticles = createDropletGroup(18, 0x7dd3fc, 0x0284c7, 0.032, () => ({ x: -3.4 + Math.random() * 2.6, y: -1.25 + Math.random() * 1.55, z: 2.78 }));
+            groundWaterParticles = createDropletGroup(26, 0xffffff, 0x38bdf8, 0.038, () => ({ x: -4.2 + Math.random() * 5.6, y: -1.35 + Math.random() * 0.5, z: 2.79 }));
+        }
+
+        function createDropletGroup(count, colorHex, emissiveHex, radius, posFn) {
+            const group = new THREE.Group();
+            const geo = new THREE.SphereGeometry(radius, 10, 10);
+            const mat = new THREE.MeshStandardMaterial({ color: colorHex, emissive: emissiveHex, emissiveIntensity: 0.65, roughness: 0.2 });
+            for (let i = 0; i < count; i++) {
+                const mesh = new THREE.Mesh(geo, mat);
+                const p = posFn();
+                mesh.position.set(p.x, p.y, p.z);
+                group.add(mesh);
+            }
+            worldGroup.add(group);
+            return group;
+        }
+
+        function createParticleSystem(count, colorHex, size, posFn) {
+            const geo = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            for (let i = 0; i < count; i++) {
+                const p = posFn();
+                positions[i * 3] = p.x; positions[i * 3 + 1] = p.y; positions[i * 3 + 2] = p.z;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const points = new THREE.Points(geo, new THREE.PointsMaterial({ color: colorHex, size: size, transparent: true, opacity: 0.88 }));
+            worldGroup.add(points);
+            return points;
+        }
+
+        function createArrow3D(startVec, endVec, colorHex, stepIndex, animType) {
+            const dir = new THREE.Vector3().subVectors(endVec, startVec);
+            const len = dir.length();
+            dir.normalize();
+            const arrowGroup = new THREE.Group();
+            const shaftLen = Math.max(0.2, len - 0.38);
+            const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, shaftLen, 10), new THREE.MeshBasicMaterial({ color: colorHex }));
+            shaft.position.y = shaftLen / 2;
+            const head = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.38, 12), new THREE.MeshBasicMaterial({ color: colorHex }));
+            head.position.y = shaftLen + 0.19;
+            arrowGroup.add(shaft, head);
+            arrowGroup.position.copy(startVec);
+            arrowGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+            arrowGroup.userData = { step: stepIndex, animType: animType, basePos: startVec.clone(), dir: dir.clone() };
+            worldGroup.add(arrowGroup);
+            animatedArrows.push(arrowGroup);
+        }
+
+        function buildArrows() {
+            createArrow3D(new THREE.Vector3(2.8, 0.6, 0.5), new THREE.Vector3(2.4, 3.2, 0.3), 0xf97316, 0, 'floatUp');
+            createArrow3D(new THREE.Vector3(-1.3, 1.4, 0.6), new THREE.Vector3(-0.7, 3.4, 0.3), 0x4ade80, 0, 'floatUp');
+            createArrow3D(new THREE.Vector3(2.6, 3.2, 0.9), new THREE.Vector3(1.8, 4.0, 0.7), 0xfef08a, 1, 'converge');
+            createArrow3D(new THREE.Vector3(-0.3, 3.2, 0.9), new THREE.Vector3(0.7, 4.0, 0.7), 0xfef08a, 1, 'converge');
+            createArrow3D(new THREE.Vector3(1.3, 3.0, 1.0), new THREE.Vector3(1.3, 3.8, 0.8), 0xfef08a, 1, 'converge');
+            createArrow3D(new THREE.Vector3(-2.9, 3.4, 0.6), new THREE.Vector3(-2.9, 1.1, 0.6), 0x38bdf8, 2, 'dropDown');
+            createArrow3D(new THREE.Vector3(-2.2, 0.55, 0.8), new THREE.Vector3(0.8, 0.55, 0.8), 0x0ea5e9, 3, 'flowRight');
+            createArrow3D(new THREE.Vector3(-2.6, 0.2, 2.82), new THREE.Vector3(-2.6, -1.0, 2.82), 0x38bdf8, 3, 'dropDown');
+            createArrow3D(new THREE.Vector3(-2.2, -1.15, 2.82), new THREE.Vector3(1.1, -1.15, 2.82), 0x7dd3fc, 3, 'flowRight');
+        }
+
+        function setupHotspots() {
+            const layer = document.getElementById('hotspots-layer');
+            layer.innerHTML = '';
+            hotspotAnchors = [
+                { label: "1. การระเหย", pos: new THREE.Vector3(2.9, 2.1, 0.5), step: 0 },
+                { label: "1. การคายน้ำ", pos: new THREE.Vector3(-1.2, 2.3, 0.8), step: 0 },
+                { label: "2. การควบแน่น (เกิดเมฆ)", pos: new THREE.Vector3(1.3, 4.9, 0.4), step: 1 },
+                { label: "3. หยาดน้ำฟ้า (ฝน)", pos: new THREE.Vector3(-3.1, 2.6, 0.6), step: 2 },
+                { label: "4. น้ำไหลรวม", pos: new THREE.Vector3(-0.7, 0.8, 0.9), step: 3 },
+                { label: "4. น้ำใต้ดินสะสม", pos: new THREE.Vector3(-1.2, -1.15, 2.85), step: 3 }
+            ];
+            hotspotElements = hotspotAnchors.map(item => {
+                const el = document.createElement('button');
+                el.className = 'hotspot-badge';
+                el.innerHTML = '<span class="hotspot-dot"></span><span>' + item.label + '</span>';
+                el.onclick = () => selectStep(item.step);
+                layer.appendChild(el);
+                return el;
+            });
+        }
+
+        function updateHotspotPositions() {
+            if (!showLabels) return;
+            const halfW = window.innerWidth / 2, halfH = window.innerHeight / 2;
+            hotspotAnchors.forEach((item, idx) => {
+                const el = hotspotElements[idx];
+                const worldPos = item.pos.clone().applyMatrix4(worldGroup.matrixWorld).project(camera);
+                if (worldPos.z > 1) { el.style.display = 'none'; }
+                else {
+                    el.style.display = 'flex';
+                    el.style.left = ((worldPos.x * halfW) + halfW) + 'px';
+                    el.style.top = (-(worldPos.y * halfH) + halfH) + 'px';
+                }
+            });
+        }
+
+        function updateVisualFocus(stepIndex, isOverview = false) {
+            animatedArrows.forEach(arrow => { arrow.visible = isOverview ? false : (arrow.userData.step === stepIndex); });
+            const showCollection = isOverview || (stepIndex === 3);
+            if (riverRunoffParticles) riverRunoffParticles.visible = showCollection;
+            if (infiltrationParticles) infiltrationParticles.visible = showCollection;
+            if (groundWaterParticles) groundWaterParticles.visible = showCollection;
+        }
+
+        function selectStep(index) {
+            currentStep = index;
+            const data = stepsData[index];
+            document.getElementById('step-badge').innerText = data.badge;
+            document.getElementById('step-title').innerText = data.title;
+            document.getElementById('step-desc').innerText = data.desc;
+            document.getElementById('step-counter').innerText = (index + 1) + ' / ' + stepsData.length;
+            toggleInfoCard(true);
+            document.querySelectorAll('.step-nav-btn').forEach(btn => { btn.classList.remove('bg-sky-600/30', 'border', 'border-sky-400/50', 'text-white'); btn.classList.add('text-slate-300'); });
+            const activeBtn = document.getElementById('nav-btn-' + index);
+            if (activeBtn) { activeBtn.classList.add('bg-sky-600/30', 'border', 'border-sky-400/50', 'text-white'); activeBtn.classList.remove('text-slate-300'); }
+            updateVisualFocus(index, false);
+            targetCamPos = new THREE.Vector3(data.camPos.x, data.camPos.y, data.camPos.z);
+            targetLookAt = new THREE.Vector3(data.target.x, data.target.y, data.target.z);
+        }
+
+        function nextStep() { selectStep((currentStep + 1) % stepsData.length); }
+        function prevStep() { selectStep((currentStep - 1 + stepsData.length) % stepsData.length); }
+        function toggleInfoCard(forceState) {
+            const card = document.getElementById('info-card');
+            if (typeof forceState === 'boolean') card.classList.toggle('hidden', !forceState);
+            else card.classList.toggle('hidden');
+        }
+
+        function resetCameraView() {
+            targetCamPos = new THREE.Vector3(0, 6.2, 14.5);
+            targetLookAt = new THREE.Vector3(0, 0.8, 0);
+            toggleInfoCard(false);
+            document.querySelectorAll('.step-nav-btn').forEach(btn => { btn.classList.remove('bg-sky-600/30', 'border', 'border-sky-400/50', 'text-white'); btn.classList.add('text-slate-300'); });
+            const overviewBtn = document.getElementById('nav-btn-overview');
+            if (overviewBtn) { overviewBtn.classList.add('bg-sky-600/30', 'border', 'border-sky-400/50', 'text-white'); overviewBtn.classList.remove('text-slate-300'); }
+            updateVisualFocus(-1, true);
+            showToast("แสดงภาพรวมวัฏจักรน้ำทั้งหมด");
+        }
+
+        function toggleAnimation() {
+            isPlaying = !isPlaying;
+            document.getElementById('play-icon').className = isPlaying ? 'fa-solid fa-pause text-sky-400' : 'fa-solid fa-play text-emerald-400';
+            document.getElementById('play-text').innerText = isPlaying ? 'หยุด' : 'เล่นต่อ';
+        }
+
+        function setSpeed(speed) {
+            animSpeed = speed;
+            document.querySelectorAll('.spd-btn').forEach(btn => { btn.classList.remove('bg-sky-600', 'text-white', 'font-bold'); btn.classList.add('text-slate-400'); });
+            const activeBtn = document.getElementById('spd-' + speed);
+            if (activeBtn) { activeBtn.classList.add('bg-sky-600', 'text-white', 'font-bold'); activeBtn.classList.remove('text-slate-400'); }
+        }
+
+        function toggleHotspots() {
+            showLabels = !showLabels;
+            document.getElementById('hotspots-layer').style.display = showLabels ? 'block' : 'none';
+            document.getElementById('labels-text').innerText = showLabels ? 'ป้ายชื่อ: เปิด' : 'ป้ายชื่อ: ปิด';
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-msg').innerText = msg;
+            box.classList.remove('opacity-0');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => { box.classList.add('opacity-0'); }, 2600);
+        }
+
+        async function toggleARMode() {
+            const video = document.getElementById('camera-feed');
+            const btnText = document.getElementById('ar-text');
+            const btnIcon = document.getElementById('ar-icon');
+            if (!isARMode) {
+                try {
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("ไม่รองรับกล้อง");
+                    arStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+                    video.srcObject = arStream;
+                    video.style.display = 'block';
+                    scene.background = null;
+                    isARMode = true;
+                    btnText.innerText = 'ปิดกล้อง AR';
+                    btnIcon.className = 'fa-solid fa-video-slash text-rose-400';
+                    showToast("เปิดกล้อง AR สำเร็จ! ส่องไปที่โต๊ะเรียนได้เลย");
+                } catch (err) {
+                    showToast("กรุณากด 'อนุญาต (Allow)' การใช้กล้องในเบราว์เซอร์");
+                }
+            } else {
+                if (arStream) { arStream.getTracks().forEach(track => track.stop()); arStream = null; }
+                video.style.display = 'none';
+                scene.background = new THREE.Color(0x0f172a);
+                isARMode = false;
+                btnText.innerText = 'เปิดกล้อง AR';
+                btnIcon.className = 'fa-solid fa-camera text-sky-400';
+                showToast("สลับกลับสู่โหมด 3D จำลอง");
+            }
+        }
+
+        let currentQuizIdx = 0, quizScore = 0, quizAnswered = false;
+        function openQuizModal() { document.getElementById('quiz-modal').classList.remove('hidden'); restartQuiz(); }
+        function closeQuizModal() { document.getElementById('quiz-modal').classList.add('hidden'); }
+        function restartQuiz() { currentQuizIdx = 0; quizScore = 0; document.getElementById('quiz-body').classList.remove('hidden'); document.getElementById('quiz-result').classList.add('hidden'); renderQuizQuestion(); }
+        function renderQuizQuestion() {
+            quizAnswered = false;
+            const qData = quizData[currentQuizIdx];
+            document.getElementById('quiz-progress').innerText = 'ข้อที่ ' + (currentQuizIdx + 1) + ' จาก ' + quizData.length;
+            document.getElementById('quiz-score-live').innerText = 'คะแนน: ' + quizScore;
+            document.getElementById('quiz-question').innerText = qData.q;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('btn-next-quiz').classList.add('hidden');
+            const optionsBox = document.getElementById('quiz-options');
+            optionsBox.innerHTML = '';
+            qData.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-600/60 text-xs sm:text-sm text-slate-200 transition';
+                btn.innerText = opt;
+                btn.onclick = () => checkQuizAnswer(i, btn);
+                optionsBox.appendChild(btn);
+            });
+        }
+        function checkQuizAnswer(selectedIdx, selectedBtn) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            const qData = quizData[currentQuizIdx];
+            const buttons = document.getElementById('quiz-options').children;
+            const feedback = document.getElementById('quiz-feedback');
+            if (selectedIdx === qData.answer) {
+                quizScore++;
+                selectedBtn.classList.add('bg-emerald-600/40', 'border-emerald-400', 'text-white');
+                feedback.className = 'mt-3 p-2.5 rounded-xl text-xs bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 sarabun';
+                feedback.innerText = qData.explain;
+            } else {
+                selectedBtn.classList.add('bg-rose-600/40', 'border-rose-400', 'text-white');
+                buttons[qData.answer].classList.add('bg-emerald-600/40', 'border-emerald-400', 'text-white');
+                feedback.className = 'mt-3 p-2.5 rounded-xl text-xs bg-rose-950/80 border border-rose-500/40 text-rose-200 sarabun';
+                feedback.innerText = 'ยังไม่ถูกต้อง! คำตอบที่ถูกคือ: ' + qData.options[qData.answer];
+            }
+            document.getElementById('quiz-score-live').innerText = 'คะแนน: ' + quizScore;
+            feedback.classList.remove('hidden');
+            document.getElementById('btn-next-quiz').classList.remove('hidden');
+        }
+        function nextQuizQuestion() {
+            currentQuizIdx++;
+            if (currentQuizIdx < quizData.length) renderQuizQuestion();
+            else {
+                document.getElementById('quiz-body').classList.add('hidden');
+                document.getElementById('quiz-result').classList.remove('hidden');
+                document.getElementById('final-score-text').innerText = 'ได้คะแนน ' + quizScore + ' เต็ม ' + quizData.length + ' คะแนน';
+                document.getElementById('final-comment').innerText = quizScore >= 4 ? "เก่งมาก! เข้าใจเรื่องวัฏจักรน้ำ 4 ขั้นตอนหลักได้อย่างยอดเยี่ยม" : "เยี่ยมมาก! ลองทบทวนขั้นตอนในแบบจำลอง 3D แล้วกลับมาทดสอบใหม่นะ";
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta(), elapsed = clock.getElapsedTime();
+            if (isPlaying) {
+                const step = delta * animSpeed;
+                if (sunGroup) sunGroup.rotation.z += step * 0.4;
+                if (vaporParticles) {
+                    const pos = vaporParticles.geometry.attributes.position.array;
+                    for (let i = 0; i < pos.length; i += 3) { pos[i + 1] += step * 0.9; pos[i] -= step * 0.15; if (pos[i + 1] > 4.2) { pos[i + 1] = 0.4; pos[i] = 1.3 + Math.random() * 3.2; } }
+                    vaporParticles.geometry.attributes.position.needsUpdate = true;
+                }
+                if (transpirationParticles) {
+                    const pos = transpirationParticles.geometry.attributes.position.array;
+                    for (let i = 0; i < pos.length; i += 3) { pos[i + 1] += step * 0.75; if (pos[i + 1] > 4.1) pos[i + 1] = 1.1; }
+                    transpirationParticles.geometry.attributes.position.needsUpdate = true;
+                }
+                if (rainParticles) {
+                    const pos = rainParticles.geometry.attributes.position.array;
+                    for (let i = 0; i < pos.length; i += 3) { pos[i + 1] -= step * 2.4; if (pos[i + 1] < 0.45) pos[i + 1] = 3.9; }
+                    rainParticles.geometry.attributes.position.needsUpdate = true;
+                }
+                if (riverRunoffParticles && riverRunoffParticles.visible) {
+                    riverRunoffParticles.children.forEach(drop => { drop.position.x += step * 1.35; drop.position.y = 0.49 + Math.sin(elapsed * 6 + drop.position.x * 3) * 0.015; if (drop.position.x > 1.15) drop.position.x = -2.9; });
+                }
+                if (infiltrationParticles && infiltrationParticles.visible) {
+                    infiltrationParticles.children.forEach(drop => { drop.position.y -= step * 0.75; if (drop.position.y < -1.35) drop.position.y = 0.32; });
+                }
+                if (groundWaterParticles && groundWaterParticles.visible) {
+                    groundWaterParticles.children.forEach(drop => { drop.position.x += step * 1.15; if (drop.position.x > 1.55) drop.position.x = -4.2; });
+                }
+                const cycle = (elapsed * animSpeed * 1.4) % 1;
+                animatedArrows.forEach(arrow => {
+                    if (!arrow.visible) return;
+                    const { animType, basePos, dir } = arrow.userData;
+                    if (animType === 'floatUp') { arrow.position.copy(basePos).addScaledVector(dir, cycle * 0.55); arrow.scale.setScalar(0.85 + Math.sin(cycle * Math.PI) * 0.25); }
+                    else if (animType === 'converge') { arrow.position.copy(basePos).addScaledVector(dir, cycle * 0.35); arrow.scale.setScalar(0.9 + Math.sin(cycle * Math.PI) * 0.2); }
+                    else if (animType === 'dropDown') { arrow.position.copy(basePos).addScaledVector(dir, cycle * 0.45); }
+                    else if (animType === 'flowRight') { arrow.position.copy(basePos).addScaledVector(dir, cycle * 0.5); }
+                });
+            }
+            if (targetCamPos && targetLookAt) {
+                camera.position.lerp(targetCamPos, 0.08);
+                controls.target.lerp(targetLookAt, 0.08);
+                if (camera.position.distanceTo(targetCamPos) < 0.05) { targetCamPos = null; targetLookAt = null; }
+            }
+            controls.update();
+            updateHotspotPositions();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }
+        window.onload = function () { init3D(); };
+    <\/script>
+</body>
+</html>`
+            },
+            {
+                id: 'demo-math-1',
+                title: 'คณิตคิดเร็ว (Speed Math)',
+                category: 'math',
+                icon: '🧮',
+                desc: 'ฝึกบวก ลบ คูณเลข แข่งกับเวลา 30 วินาที!',
+                createdAt: 1000,
+                code: `<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="https://cdn.tailwindcss.com"><\/script>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+<style>body { font-family: 'Prompt', sans-serif; }</style>
+</head>
+<body class="bg-indigo-50 h-[100dvh] overflow-hidden flex items-center justify-center p-3">
+  <div class="bg-white p-6 rounded-3xl shadow-xl max-w-md w-full text-center">
+    <div class="flex justify-between text-base font-bold mb-4">
+      <span class="text-indigo-600 bg-indigo-100 px-3.5 py-1 rounded-full">คะแนน: <span id="score">0</span></span>
+      <span class="text-rose-600 bg-rose-100 px-3.5 py-1 rounded-full">เวลา: <span id="time">30</span>s</span>
+    </div>
+    <div id="gameArea">
+      <div class="text-4xl sm:text-5xl font-bold text-slate-800 my-6" id="question">5 + 3 = ?</div>
+      <div id="feedback" class="h-6 text-sm font-bold mb-2"></div>
+      <div class="grid grid-cols-2 gap-3" id="options"></div>
+    </div>
+    <div id="endArea" class="hidden">
+      <div class="text-5xl mb-3">🏆</div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">หมดเวลาแล้ว!</h2>
+      <p class="text-base text-slate-600 mb-5">คุณทำได้ <span id="finalScore" class="font-bold text-indigo-600 text-2xl">0</span> คะแนน</p>
+      <button onclick="startGame()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold w-full hover:bg-indigo-700">เล่นอีกครั้ง</button>
+    </div>
+  </div>
+  <script>
+    let score = 0, time = 30, timer, correctAns = 0, isLocked = false;
+    function startGame() {
+      score = 0; time = 30; isLocked = false;
+      document.getElementById('score').innerText = score;
+      document.getElementById('time').innerText = time;
+      document.getElementById('feedback').innerText = '';
+      document.getElementById('gameArea').classList.remove('hidden');
+      document.getElementById('endArea').classList.add('hidden');
+      nextQuestion();
+      clearInterval(timer);
+      timer = setInterval(() => {
+        time--;
+        document.getElementById('time').innerText = time;
+        if(time <= 0) {
+          clearInterval(timer);
+          document.getElementById('gameArea').classList.add('hidden');
+          document.getElementById('endArea').classList.remove('hidden');
+          document.getElementById('finalScore').innerText = score;
+        }
+      }, 1000);
+    }
+    function nextQuestion() {
+      isLocked = false;
+      document.getElementById('feedback').innerText = '';
+      const num1 = Math.floor(Math.random() * 15) + 2;
+      const num2 = Math.floor(Math.random() * 15) + 1;
+      const opType = Math.floor(Math.random() * 3);
+      let qText = '';
+      if (opType === 0) { correctAns = num1 + num2; qText = num1 + ' + ' + num2 + ' = ?'; }
+      else if (opType === 1) { const maxVal = Math.max(num1, num2); const minVal = Math.min(num1, num2); correctAns = maxVal - minVal; qText = maxVal + ' - ' + minVal + ' = ?'; }
+      else { const m1 = Math.floor(Math.random() * 9) + 2; const m2 = Math.floor(Math.random() * 9) + 2; correctAns = m1 * m2; qText = m1 + ' × ' + m2 + ' = ?'; }
+      document.getElementById('question').innerText = qText;
+      let choices = new Set([correctAns]);
+      while(choices.size < 4) { const offset = (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1); const wrongAns = correctAns + offset; if (wrongAns >= 0 && wrongAns !== correctAns) choices.add(wrongAns); }
+      const shuffled = Array.from(choices).sort(() => Math.random() - 0.5);
+      const optDiv = document.getElementById('options');
+      optDiv.innerHTML = '';
+      shuffled.forEach(num => {
+        const btn = document.createElement('button');
+        btn.className = 'bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-800 font-bold text-2xl py-3.5 rounded-2xl transition';
+        btn.innerText = num;
+        btn.onclick = () => {
+          if (isLocked) return;
+          isLocked = true;
+          const fb = document.getElementById('feedback');
+          if(num === correctAns) { score += 10; document.getElementById('score').innerText = score; btn.className = 'bg-emerald-500 text-white font-bold text-2xl py-3.5 rounded-2xl transition'; fb.className = 'h-6 text-sm font-bold mb-2 text-emerald-600'; fb.innerText = '✓ ถูกต้อง! +10 คะแนน'; }
+          else { btn.className = 'bg-rose-500 text-white font-bold text-2xl py-3.5 rounded-2xl transition'; fb.className = 'h-6 text-sm font-bold mb-2 text-rose-600'; fb.innerText = '✗ ผิด! คำตอบที่ถูกคือ ' + correctAns; }
+          setTimeout(nextQuestion, 600);
+        };
+        optDiv.appendChild(btn);
+      });
+    }
+    startGame();
+  <\/script>
+</body>
+</html>`
+            }
+        ];
+
+        let games = [];
+        let currentCategory = 'all';
+        let currentPlayingGame = null;
+        let gameToDeleteId = null;
+        let isTeacherMode = false;
+
+        function initApp() {
+            const saved = localStorage.getItem('edugame_hub_standalone_v1');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    games = Array.isArray(parsed) && parsed.length > 0 ? parsed : [...defaultGames];
+                } catch (e) {
+                    games = [...defaultGames];
+                }
+            } else {
+                games = [...defaultGames];
+                saveGames();
+            }
+            renderGames();
+        }
+
+        function saveGames() {
+            localStorage.setItem('edugame_hub_standalone_v1', JSON.stringify(games));
+        }
+
+        function openPinModal() {
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinError').classList.add('hidden');
+            document.getElementById('pinModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('pinInput').focus(), 100);
+        }
+
+        function closePinModal() {
+            document.getElementById('pinModal').classList.add('hidden');
+        }
+
+        function verifyTeacherPin(e) {
+            e.preventDefault();
+            const val = document.getElementById('pinInput').value;
+            if (val === teacherPin) {
+                isTeacherMode = true;
+                document.getElementById('teacherLoginBtn').classList.add('hidden');
+                document.getElementById('teacherActiveControls').classList.remove('hidden');
+                closePinModal();
+                renderGames();
+                showToast('ปลดล็อกโหมดคุณครูแล้ว สามารถเพิ่ม แก้ไขโค้ดทับ หรือเปลี่ยนรหัสได้');
+            } else {
+                document.getElementById('pinError').classList.remove('hidden');
+            }
+        }
+
+        function openChangePinModal() {
+            if (!isTeacherMode) return openPinModal();
+            document.getElementById('oldPinInput').value = '';
+            document.getElementById('newPinInput').value = '';
+            document.getElementById('confirmNewPinInput').value = '';
+            document.getElementById('changePinError').classList.add('hidden');
+            document.getElementById('changePinModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('oldPinInput').focus(), 100);
+        }
+
+        function closeChangePinModal() {
+            document.getElementById('changePinModal').classList.add('hidden');
+        }
+
+        function saveNewTeacherPin(e) {
+            e.preventDefault();
+            if (!isTeacherMode) return;
+            const oldPin = document.getElementById('oldPinInput').value.trim();
+            const newPin = document.getElementById('newPinInput').value.trim();
+            const confirmPin = document.getElementById('confirmNewPinInput').value.trim();
+            const errEl = document.getElementById('changePinError');
+
+            if (oldPin !== teacherPin) {
+                errEl.innerText = 'รหัสผ่านเดิมไม่ถูกต้อง';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (newPin.length < 4) {
+                errEl.innerText = 'รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัว';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (newPin !== confirmPin) {
+                errEl.innerText = 'รหัสผ่านใหม่ทั้ง 2 ช่องไม่ตรงกัน';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            teacherPin = newPin;
+            localStorage.setItem('edugame_teacher_pin', newPin);
+            closeChangePinModal();
+            showToast('เปลี่ยนรหัสผ่านคุณครูใหม่เรียบร้อยแล้ว!');
+        }
+
+        function lockTeacherMode() {
+            isTeacherMode = false;
+            document.getElementById('teacherLoginBtn').classList.remove('hidden');
+            document.getElementById('teacherActiveControls').classList.add('hidden');
+            renderGames();
+            showToast('ล็อกโหมดคุณครูเรียบร้อยแล้ว');
+        }
+
+        const categoryInfo = {
+            math: { name: 'คณิตศาสตร์', color: 'bg-blue-100 text-blue-700' },
+            language: { name: 'ภาษา', color: 'bg-amber-100 text-amber-700' },
+            science: { name: 'วิทยาศาสตร์ / AR', color: 'bg-emerald-100 text-emerald-700' },
+            general: { name: 'ฝึกสมอง / ทั่วไป', color: 'bg-purple-100 text-purple-700' }
+        };
+
+        function renderGames() {
+            const grid = document.getElementById('gamesGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = games.filter(g => {
+                const matchCat = currentCategory === 'all' || g.category === currentCategory;
+                const matchSearch = (g.title || '').toLowerCase().includes(searchQuery) || (g.desc || '').toLowerCase().includes(searchQuery);
+                return matchCat && matchSearch;
+            });
+
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            filtered.forEach(game => {
+                const cat = categoryInfo[game.category] || categoryInfo.general;
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col justify-between group relative overflow-hidden';
+                
+                const teacherBtnsHtml = isTeacherMode ? `
+                    <div class="flex items-center gap-1 ml-1">
+                        <button onclick="openEditGameModal('${game.id}')" title="แก้ไข/เขียนโค้ดเกมทับ" class="text-indigo-500 hover:text-indigo-700 p-1.5 rounded-lg hover:bg-indigo-50 transition">
+                            <i class="fa-solid fa-pen-to-square text-sm"></i>
+                        </button>
+                        <button onclick="promptDeleteGame('${game.id}')" title="ลบเกมนี้" class="text-slate-400 hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-50 transition">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform shadow-sm">
+                                ${game.icon || '🎮'}
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full ${cat.color}">
+                                    ${cat.name}
+                                </span>
+                                ${teacherBtnsHtml}
+                            </div>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-800 mb-2 group-hover:text-indigo-600 transition line-clamp-1">${game.title}</h3>
+                        <p class="text-slate-500 text-sm mb-6 line-clamp-2 min-h-[40px]">${game.desc || 'คลิกปุ่มด้านล่างเพื่อเริ่มเล่นเกมการศึกษา'}</p>
+                    </div>
+                    <button onclick="playGame('${game.id}')" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>เล่นเกมนี้</span>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === cat) {
+                    btn.className = 'cat-btn active bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition shadow-sm';
+                } else {
+                    btn.className = 'cat-btn bg-white text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition border border-slate-200';
+                }
+            });
+            renderGames();
+        }
+
+        function openAddGameModal() {
+            if (!isTeacherMode) return openPinModal();
+            document.getElementById('addGameForm').reset();
+            document.getElementById('editGameId').value = '';
+            document.getElementById('modalFormTitle').innerText = 'เพิ่มเกมใหม่เข้าสู่ระบบ';
+            document.getElementById('addGameModal').classList.remove('hidden');
+        }
+
+        function openEditGameModal(id) {
+            if (!isTeacherMode) return openPinModal();
+            const game = games.find(g => g.id === id);
+            if (!game) return;
+
+            document.getElementById('editGameId').value = game.id;
+            document.getElementById('modalFormTitle').innerText = 'แก้ไข / เขียนโค้ดเกมทับของเดิม';
+            document.getElementById('gameTitle').value = game.title;
+            document.getElementById('gameCategory').value = game.category || 'science';
+            document.getElementById('gameIcon').value = game.icon || '🎮';
+            document.getElementById('gameDesc').value = game.desc || '';
+            document.getElementById('gameCode').value = game.code || '';
+            document.getElementById('addGameModal').classList.remove('hidden');
+        }
+
+        function clearCodeBox() {
+            document.getElementById('gameCode').value = '';
+            document.getElementById('gameCode').focus();
+        }
+
+        function closeAddGameModal() {
+            document.getElementById('addGameModal').classList.add('hidden');
+        }
+
+        function saveNewGame(e) {
+            e.preventDefault();
+            if (!isTeacherMode) return;
+
+            const editId = document.getElementById('editGameId').value.trim();
+            const title = document.getElementById('gameTitle').value.trim();
+            const category = document.getElementById('gameCategory').value;
+            const icon = document.getElementById('gameIcon').value.trim() || '🎮';
+            const desc = document.getElementById('gameDesc').value.trim();
+            const code = document.getElementById('gameCode').value.trim();
+
+            if (!title || !code) return;
+
+            const gameId = editId || ('game-' + Date.now());
+            const existingGame = games.find(g => g.id === gameId);
+            const gameData = { 
+                id: gameId, 
+                title, 
+                category, 
+                icon, 
+                desc, 
+                code, 
+                createdAt: existingGame ? existingGame.createdAt : Date.now() 
+            };
+
+            if (editId) {
+                const idx = games.findIndex(g => g.id === editId);
+                if (idx !== -1) games[idx] = gameData;
+            } else {
+                games.unshift(gameData);
+            }
+
+            saveGames();
+            renderGames();
+            closeAddGameModal();
+            showToast(editId ? 'อัปเดตโค้ดเกม "' + title + '" เรียบร้อยแล้ว!' : 'เพิ่มเกม "' + title + '" เรียบร้อยแล้ว!');
+        }
+
+        function playGame(id) {
+            const game = games.find(g => g.id === id);
+            if (!game) return;
+
+            currentPlayingGame = game;
+            document.getElementById('playerGameIcon').innerText = game.icon || '🎮';
+            document.getElementById('playerGameTitle').innerText = game.title;
+            document.getElementById('playerGameDesc').innerText = game.desc || '';
+            
+            const iframe = document.getElementById('gameIframe');
+            const rawCode = (game.code || '').trim();
+
+            if (/^https?:\/\//i.test(rawCode) && !rawCode.includes('<')) {
+                iframe.removeAttribute('srcdoc');
+                iframe.src = rawCode;
+            } else {
+                iframe.removeAttribute('src');
+                iframe.srcdoc = rawCode;
+            }
+
+            document.getElementById('playGameModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function reloadCurrentGame() {
+            if (!currentPlayingGame) return;
+            const iframe = document.getElementById('gameIframe');
+            const rawCode = (currentPlayingGame.code || '').trim();
+            iframe.removeAttribute('src');
+            iframe.srcdoc = '';
+            setTimeout(() => {
+                if (/^https?:\/\//i.test(rawCode) && !rawCode.includes('<')) {
+                    iframe.removeAttribute('srcdoc');
+                    iframe.src = rawCode;
+                } else {
+                    iframe.srcdoc = rawCode;
+                }
+            }, 50);
+        }
+
+        function closePlayModal() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+            document.getElementById('playGameModal').classList.add('hidden');
+            const iframe = document.getElementById('gameIframe');
+            iframe.removeAttribute('src');
+            iframe.srcdoc = '';
+            document.body.style.overflow = 'auto';
+            currentPlayingGame = null;
+        }
+
+        function toggleFullScreenPlayer() {
+            const modal = document.getElementById('playGameModal');
+            const icon = document.getElementById('fullscreenIcon');
+            if (!document.fullscreenElement) {
+                if (modal.requestFullscreen) {
+                    modal.requestFullscreen().catch(() => {});
+                }
+                icon.className = 'fa-solid fa-compress';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                }
+                icon.className = 'fa-solid fa-expand';
+            }
+        }
+
+        function promptDeleteGame(id) {
+            if (!isTeacherMode) return;
+            gameToDeleteId = id;
+            document.getElementById('deleteConfirmModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            gameToDeleteId = null;
+            document.getElementById('deleteConfirmModal').classList.add('hidden');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            if (gameToDeleteId && isTeacherMode) {
+                games = games.filter(g => g.id !== gameToDeleteId);
+                saveGames();
+                renderGames();
+                showToast('ลบเกมเรียบร้อยแล้ว');
+                closeDeleteModal();
+            }
+        });
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
